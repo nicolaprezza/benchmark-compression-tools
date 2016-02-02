@@ -7,14 +7,14 @@ n=$1
 
 if (( $n==1 ))
 then 
-	Fn="a"
+	Fn="0"
 else
 	if (( $n==2 ))
 	then
-		Fn="b"
+		Fn="1"
 	else
-		Fn2="a"
-		Fn1="b"
+		Fn2="0"
+		Fn1="1"
 
 		for (( c=1;c<=n-2;c++ )); do
 
@@ -26,4 +26,4 @@ else
 	fi
 fi
 
-echo $Fn
+printf $Fn

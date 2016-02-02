@@ -11,15 +11,8 @@ for folder in artificial pseudo-real real; do
 
 		algo=`cat $file | grep "Command being timed:" | cut -d'"' -f 2 | cut -d' ' -f1`
 		f=`cat $file | grep "Command being timed:" | cut -d'"' -f2 | cut -d'/' -f3 | cut -d' ' -f1`
-
-		if [ "$algo" = "bwt" ] || [ "$algo" = "cw-bwt" ]; then 
-			RSS=`cat $file | grep "Maximum resident set size" | cut -d' ' -f 6`
-			RSS=$((RSS-3000)) #correct: subtract (approximate) size taken by shared libraries
-		else		
-			RSS=`cat $file | grep "Size of the structures (KB):" | cut -d' ' -f 7`
-		fi
-
-		ftime=`cat $file | grep "Elapsed (wall clock)" | cut -d' ' -f 8`
+		RSS=`cat $file | grep "Maximum resident set size" | cut -d' ' -f 6`
+		ftime=`cat $file | grep "User time (seconds):" | cut -d' ' -f 4`
 
 		printf $algo"\t"$f"\t"$RSS"\t"$ftime"\n" >> $all_data
 
@@ -78,16 +71,9 @@ for d in `cat $all_data | cut -f2 | sort | uniq`; do #for all datasets
 
 	for t in `cat $all_data | cut -f1 | sort | uniq`; do #for all tools
 		
-		t_size=`cat $all_data | grep -P ^"$t\t$d" | cut -f3`	#tool RAM consumption
-		#t_size=$((t_size-3000))
-		compression="-"		
+		t_time=`cat $all_data | grep -P ^"$t\t$d" | cut -f4`	#TIME
 
-		#Compute %compression. avoid errors with missing data
-		if [ "$t_size" != "" ]; then 
-			compression=`echo "scale=4;100*$t_size/$d_size" | bc`
-		fi
-
-		printf "\t"$t_size" ("$compression"%%)"
+		printf "\t"$t_time
 
 	done
 
